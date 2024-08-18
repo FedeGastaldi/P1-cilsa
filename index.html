@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Cilsa</title>
+    <link rel="stylesheet" href="style.css" id="css-link">
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+    <script>
+        (function(){
+            emailjs.init("AAOcM5gmLIIlGg4fG");  
+        })();
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Datos Personales</h1>
+        <form id="personal-data-form">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            <span id="email-error" class="error-message"></span>
+
+            <label for="fecha_nacimiento">Fecha de nacimiento:</label>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required>
+
+            <label for="pais_residencia">País de residencia:</label>
+            <select id="pais_residencia" name="pais_residencia" required>
+                <option value="">Seleccione un país</option>
+                <option value="argentina">Argentina</option>
+                <option value="bolivia">Bolivia</option>
+                <option value="brasil">Brasil</option>
+                <option value="uruguay">Uruguay</option>
+                <option value="mexico">México</option>
+                <option value="españa">España</option>
+                <option value="otro">Otro</option>
+                
+            </select>
+
+            <button type="submit">Enviar</button>
+        </form>
+
+        <div id="response-message" class="response-message"></div>
+
+        <button id="toggle-contrast">Alto Contraste</button>
+    </div>
+    
+    <script>
+        document.getElementById('toggle-contrast').addEventListener('click', function() {
+            const cssLink = document.getElementById('css-link');
+            if (cssLink.getAttribute('href') === 'style.css') {
+                cssLink.setAttribute('href', 'high-contrast.css');
+                this.textContent = 'Normal';
+            } else {
+                cssLink.setAttribute('href', 'style.css');
+                this.textContent = 'Alto Contraste';
+            }
+        });
+
+        // Validación del email y envío del formulario
+document.getElementById('personal-data-form').addEventListener('submit', function(event) {
+    event.preventDefault();  // Evita el envío por defecto del formulario
+
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(emailInput.value)) {
+        emailError.textContent = 'Por favor, ingrese un email válido.';
+        emailInput.classList.add('input-error');
+        return;  // Detiene el envío del formulario si el email no es válido
+    } else {
+        emailError.textContent = '';
+        emailInput.classList.remove('input-error');
+    }
+
+    // Recoge los datos del formulario
+    const formData = {
+        nombre: document.getElementById('nombre').value,
+        apellido: document.getElementById('apellido').value,
+        email: document.getElementById('email').value,
+        fecha_nacimiento: document.getElementById('fecha_nacimiento').value,
+        pais_residencia: document.getElementById('pais_residencia').value,
+    };
+
+    // Enviar el correo con EmailJS
+    emailjs.send("service_h7za6bg", "template_tvvec78", formData)
+    .then(response => {
+        const responseMessage = document.getElementById('response-message');
+        responseMessage.textContent = '¡El formulario se envió correctamente!';
+        responseMessage.classList.add('success-message');
+    })
+    .catch(error => {
+        const responseMessage = document.getElementById('response-message');
+        responseMessage.textContent = 'Hubo un error al enviar el formulario. Por favor, inténtelo de nuevo.';
+        responseMessage.classList.add('error-message');
+        console.error('Error al enviar el formulario:', error);
+    });
+});
+    </script>
+</body>
+</html>
